@@ -3,18 +3,15 @@ from Collecte import *
 from Traitement import *
 
 
-
-
-
 class Prisme():
-    def __init__(self,traitement):
+    def __init__(self,traitement):    
         self.traitement = traitement
 
     def run(self,urls):        
-        collecte = Collecte(urls)
+        collecte = Collecte(urls)         
         self.Tr = Traitement()
         self.Tr.load(collecte.content())
-        collecte.run(self.traitement, urls)
+        collecte.run(self.traitement)
         self.Tr.run(self.traitement)
   
         
