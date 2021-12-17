@@ -1,16 +1,21 @@
 #!/bin/env python3 
 
-urls = ['https://math.univ-angers.fr/','http://dominique.frin.free.fr/terminales/coursTS_integration.pdf']  
-
+urls =[]
+with open("liste_urls.txt",encoding="utf_8_sig") as f:
+    for ligne in f:
+        urls.append(ligne.strip())
+    f.close
   
-#Paramètres nuage de mots
-'''
+
 mots_exclus= list()
 with open("stopword.txt", encoding ="utf_8_sig") as f:
-    for line in f:
-        mots_exclus.append(line.strip())
+    for ligne in f:
+        mots_exclus.append(ligne.strip())
 f.close()
-'''
-mots_exclus = ['de'] 
-navigateurpath = None
-nombre_mots = 100 
+
+
+f = open('liste_urls.txt', 'r')
+text=f.readlines()
+NumberOfLine = len(text)
+nombre_mots = 50 
+max_mots=int(nombre_mots % NumberOfLine)
