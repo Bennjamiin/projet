@@ -1,5 +1,4 @@
 #!/bin/env python3 
-import pathlib
 import requests
 import webbrowser
 from wordcloud import WordCloud
@@ -8,48 +7,40 @@ import os
 from config import *
 
 
-
-
-
 class Traitement():
-    def load(self,fichiers): 
-        self.fichiers = fichiers
+    def load(self,liste): 
+        self.liste = liste     
 
     def run(self,traitement):
-        if traitement=='Nuage':        #####OK
+        indice=0
+        if traitement=='Nuage':      
             self.cloud = []        
-            k=0 
-            for i in self.fichiers:          
-                cloud = WordCloud(stopwords = mots_exclus, max_words=nombre_mots,max_font_size=50).generate(i)        
-                save_dir = f"Cloud/{k}.png"             
+            for mot in self.liste:          
+                cloud = WordCloud(stopwords = mots_exclus, max_words=nombre_mots,max_font_size=50).generate(mot)        
+                save_dir = f"Cloud/{indice}.png"             
                 cloud.to_file(save_dir)
                 self.cloud.append(save_dir) 
-                k+=1
-        elif traitement=='Image':
+                indice+=1
+        elif traitement=='Image':     
             self.images=[]
-            k=0
-            for url in self.fichiers:
-                if url == ['PDF']:  ## si c'est un fichier PDF
-                    for filename in os.listdir(f'{os.getcwd()}/image/PDF'): #on ajoute a la liste self.images le chemin et nom des images enregistré dans image/PDF
-                        self.images.append(f'{os.getcwd()}/image/PDF/{filename}')
-
-
-                else:   ##fichier HTML On télécharge les images dans le fichier image/HTML
-                    for i in url:
-                        file_ext = i.split('.')[-1]
-                        with open(f'image/HTML/{k}.{file_ext}', 'wb') as f:
+            for img in self.liste:
+                if img == ['PDF']:  
+                    for numero in os.listdir(f'PDF'): 
+                        self.images.append(f'PDF/{numero}')
+                else:  
+                    for i in img:
+                        numero = i.split('.')[-1]
+                        with open(f'HTML/{indice}.{numero}', 'wb') as f:
                             f.write(requests.get(i).content)
-
-                        self.images.append(f"image/HTML/{k}.{file_ext}") #on ajoute a la liste self.images le chemin et nom des différentes images
-                        k+=1
-
+                        self.images.append(f"HTML/{indice}.{numero}") 
+                        indice+=1
 
 
-    def show(self,traitement):              ###### OK
-        base = """ 
+
+    def show(self,traitement):       
+        base =  """ 
                 <html>
                     <head>
-        
                     </head>
                 </html> 
                 """       
@@ -57,13 +48,14 @@ class Traitement():
         soup = BeautifulSoup(base, features="html.parser") 
         if traitement=='Nuage':
             for i in self.cloud:
-                word = soup.new_tag("img", src=i, style="display:block")
-                soup.head.append(word)        
+                word = soup.new_tag("img", src=i)
+                soup.head.append(word)
                 soup.head.append(soup.new_tag('br'))
-            with open("nuages.html", "w") as f:
+            with open("Nuage.html", "w") as f:
                 f.truncate(0)
                 f.write(str(soup))        
-            webbrowser.open('nuages.html')   
+            webbrowser.open('Nuage.html')   
+            print("Nuage de mot affiché")
 
         elif traitement=='Image':
             for i in self.images: 
@@ -71,12 +63,6 @@ class Traitement():
                 soup.head.append(image)        
                 soup.head.append(soup.new_tag('br'))
             with open("Image.html", "w") as f: 
-                f.truncate(0)
                 f.write(str(soup))
-            webbrowser.get(navigateurpath).open('Image.html')
-
-
-                
-                
-
-
+            webbrowser.get(None).open('Image.html')
+            print("Images de docs affichés")
