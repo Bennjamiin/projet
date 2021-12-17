@@ -1,3 +1,4 @@
+#!/bin/env python3
 from Ressource import Ressource
 import os
 import shutil
